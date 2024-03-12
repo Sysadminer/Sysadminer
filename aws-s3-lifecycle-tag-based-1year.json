@@ -1,0 +1,33 @@
+{
+  "Rules": [
+    {
+      "ID": "1-year-retention",
+      "Filter": {
+        "Prefix": ""
+      },
+      "Status": "Enabled",
+      "Transitions": [
+        {
+          "Days": 365,
+          "StorageClass": "STANDARD_IA"
+        }
+      ],
+      "NoncurrentVersionTransitions": [],
+      "Expiration": {
+        "Days": 365
+      },
+      "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+      },
+      "TagFilters": [
+        {
+          "Key": "retention",
+          "Value": "1-year"
+        }
+      ],
+      "NoncurrentVersionExpiration": {
+        "NoncurrentDays": 1
+      }
+    }
+  ]
+}
