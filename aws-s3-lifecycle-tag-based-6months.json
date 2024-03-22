@@ -1,0 +1,27 @@
+{
+  "Rules": [
+    {
+      "ID": "6-months-retention",
+      "Filter": {
+        "Prefix": ""
+      },
+      "Status": "Enabled",
+      "Transitions": [
+        {
+          "Days": 90,
+          "StorageClass": "STANDARD_IA"
+        }
+      ],
+      "NoncurrentVersionTransitions": [],
+      "Expiration": {
+        "Days": 180
+      },
+      "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+      },
+      "NoncurrentVersionExpiration": {
+        "NoncurrentDays": 90
+      }
+    }
+  ]
+}

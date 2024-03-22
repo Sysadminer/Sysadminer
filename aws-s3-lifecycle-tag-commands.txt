@@ -1,0 +1,62 @@
+#---------------------------------------------------------------------
+# Apply to one bucket
+#---------------------------------------------------------------------
+# Powershell
+#---------------------------------------------------------------------
+$bucketname = "config-bucket-264183654793"
+$lifecycleConfigFile = "C:\tempdata\git\aws-s3\aws-s3\aws-s3-lifecycle-tag-based-1year.json"
+
+# Command to apply the lifecycle policy
+aws s3api put-bucket-lifecycle-configuration --bucket $bucketname --lifecycle-configuration file://$lifecycleConfigFile
+#---------------------------------------------------------------------
+aws s3api put-bucket-lifecycle-configuration \
+    --bucket YOUR_BUCKET_NAME \
+    --lifecycle-configuration file://aws-s3-lifecycle-tag-based-1month.json
+
+aws s3api put-bucket-lifecycle-configuration \
+    --bucket YOUR_BUCKET_NAME \
+    --lifecycle-configuration file://aws-s3-lifecycle-tag-based-6months.json
+#---------------------------------------------------------------------
+# Powershell
+#---------------------------------------------------------------------
+$bucketname = "prod-ipgw-vpc-flow-logs"
+$lifecycleConfigFile = "C:\tempdata\git\aws-s3\aws-s3\aws-s3-lifecycle-tag-based-1year.json"
+
+# Command to apply the lifecycle policy
+aws s3api put-bucket-lifecycle-configuration --bucket $bucketname --lifecycle-configuration file://$lifecycleConfigFile
+#---------------------------------------------------------------------
+#Bash
+#---------------------------------------------------------------------
+aws s3api put-bucket-lifecycle-configuration \
+    --bucket YOUR_BUCKET_NAME \
+    --lifecycle-configuration file://aws-s3-lifecycle-tag-based-1year.json
+
+    aws s3api put-bucket-lifecycle-configuration \
+    --bucket YOUR_BUCKET_NAME \
+    --lifecycle-configuration file://aws-s3-lifecycle-tag-based-forver.json
+
+
+# Apply based on tag
+# Define the tag values and corresponding lifecycle policies
+$tagPolicyMapping = @{
+    "retention:6-months" = "aws-s3-lifecycle-tag-based-6months.json"
+    "retention:1-year" = "aws-s3-lifecycle-tag-based-1year.json"
+    "retention:forever" = "aws-s3-lifecycle-tag-based-forever.json"
+}
+
+# Iterate over each tag and corresponding policy
+foreach ($tag in $tagPolicyMapping.Keys) {
+    Write-Output "Applying lifecycle policy for tag: $tag"
+    
+    # List buckets with the specific tag
+    $tagKey, $tagValue = $tag -split ":"
+    $bucketArns = aws resourcegroupstaggingapi get-resources --tag-filters "Key=$tagKey,Values=$tagValue" --resource-type-filters s3 | Select-Object -ExpandProperty ResourceARN
+    $bucketNames = $bucketArns | ForEach-Object { ($_ -split "/")[-1] }
+    
+    # Apply the lifecycle policy to each bucket
+    foreach ($bucketName in $bucketNames) {
+        Write-Output "Applying lifecycle policy to bucket: $bucketName"
+        $policyPath = $tagPolicyMapping[$tag]
+        aws s3api put-bucket-lifecycle-configuration --bucket $bucketName --lifecycle-configuration file://$policyPath
+    }
+}

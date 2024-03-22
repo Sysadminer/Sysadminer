@@ -1,0 +1,33 @@
+{
+  "Rules": [
+    {
+      "ID": "forever-retention",
+      "Filter": {
+        "Prefix": ""
+      },
+      "Status": "Enabled",
+      "Transitions": [
+        {
+          "Days": 90,
+          "StorageClass": "STANDARD_IA"
+        },
+        {
+          "Days": 180,
+          "StorageClass": "GLACIER"
+        },
+        {
+          "Days": 360,
+          "StorageClass": "DEEP_ARCHIVE"
+        }
+      ],
+      "NoncurrentVersionTransitions": [],
+      "Expiration": {},
+      "AbortIncompleteMultipartUpload": {
+        "DaysAfterInitiation": 7
+      },
+      "NoncurrentVersionExpiration": {
+        "NoncurrentDays": 180
+      }
+    }
+  ]
+}
